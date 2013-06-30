@@ -9,20 +9,13 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
             http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-	default-lazy-init="true">
+	default-lazy-init="false" >
 
 
 	<!-- =============================================================== -->
 	<!-- Resources -->
 	<!-- =============================================================== -->
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:jdbc.properties</value>
-			</list>
-		</property>
-	</bean>
+	<context:property-placeholder location="classpath:jdbc.properties" />
 
 	<!-- =============================================================== -->
 	<!-- Data Source -->

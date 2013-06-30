@@ -32,17 +32,18 @@ import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
 
-/** 
+/**
  * This class is to route IQ packets to their corresponding handler.
  * 
  * 对IQ进行路由，交付对应的处理器(handler)
- *
+ * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 @Component
@@ -59,26 +60,34 @@ public class IQRouter {
 	/** namespace与IQHandler缓存器 */
 	private Map<String, IQHandler> namespace2Handlers = new ConcurrentHashMap<String, IQHandler>();
 
-	private IQHandler iqHandler ;
-	
-	private IQRegisterHandler iqRegisterHandler ;
-	
-	private IQRosterHandler iqRosterHandler  ;
-	
+	@Autowired
+	private IQAuthHandler iqAuthHandler;
+
+	@Autowired
+	private IQRegisterHandler iqRegisterHandler;
+
+	@Autowired
+	private IQRosterHandler iqRosterHandler;
+
 	/**
 	 * Constucts a packet router registering new IQ handlers.
 	 */
 	public IQRouter() {
 		sessionManager = SessionManager.getInstance();
-		iqHandlers.add(new IQAuthHandler());
-		iqHandlers.add(new IQRegisterHandler());
-		iqHandlers.add(new IQRosterHandler());
+		// iqHandlers.add(new IQAuthHandler());
+		// iqHandlers.add(new IQRegisterHandler());
+		// iqHandlers.add(new IQRosterHandler());
+		
+		iqHandlers.add(iqAuthHandler);
+		iqHandlers.add(iqRegisterHandler);
+		iqHandlers.add(iqRosterHandler);
 	}
 
 	/**
 	 * Routes the IQ packet based on its namespace.
 	 * 
-	 * @param packet the packet to route
+	 * @param packet
+	 *            the packet to route
 	 */
 	public void route(IQ packet) {
 		if (packet == null) {
@@ -91,8 +100,10 @@ public class IQRouter {
 
 		if (session == null
 				|| session.getStatus() == Session.STATUS_AUTHENTICATED
-				|| ("jabber:iq:auth".equals(packet.getChildElement().getNamespaceURI())
-						|| "jabber:iq:register".equals(packet.getChildElement().getNamespaceURI()) || "urn:ietf:params:xml:ns:xmpp-bind"
+				|| ("jabber:iq:auth".equals(packet.getChildElement()
+						.getNamespaceURI())
+						|| "jabber:iq:register".equals(packet.getChildElement()
+								.getNamespaceURI()) || "urn:ietf:params:xml:ns:xmpp-bind"
 							.equals(packet.getChildElement().getNamespaceURI()))) {
 			// 处理IQ包
 			handle(packet);
@@ -118,7 +129,8 @@ public class IQRouter {
 			// 返回类型的IQ
 			if (namespace == null) {
 				// 返回类型的IQ类型不为result,error为未知包
-				if (packet.getType() != IQ.Type.result && packet.getType() != IQ.Type.error) {
+				if (packet.getType() != IQ.Type.result
+						&& packet.getType() != IQ.Type.error) {
 					log.warn("Unknown packet " + packet);
 				}
 			} else {
@@ -126,7 +138,8 @@ public class IQRouter {
 				IQHandler handler = getHandler(namespace);
 				// 该消息对应的处理器(Handler)不存在
 				if (handler == null) {
-					sendErrorPacket(packet, PacketError.Condition.service_unavailable);
+					sendErrorPacket(packet,
+							PacketError.Condition.service_unavailable);
 				} else {
 					// 消息处理器进行消息处理
 					handler.process(packet);
@@ -150,9 +163,11 @@ public class IQRouter {
 	 * 将错误消息返回给发送者
 	 * 
 	 */
-	private void sendErrorPacket(IQ originalPacket, PacketError.Condition condition) {
+	private void sendErrorPacket(IQ originalPacket,
+			PacketError.Condition condition) {
 		if (IQ.Type.error == originalPacket.getType()) {
-			log.error("Cannot reply an IQ error to another IQ error: " + originalPacket);
+			log.error("Cannot reply an IQ error to another IQ error: "
+					+ originalPacket);
 			return;
 		}
 		IQ reply = IQ.createResultIQ(originalPacket);
@@ -170,11 +185,13 @@ public class IQRouter {
 	 * 
 	 * 添加一个IQHandler到List中若已经添加过则跑出异常
 	 * 
-	 * @param handler the IQHandler
+	 * @param handler
+	 *            the IQHandler
 	 */
 	public void addHandler(IQHandler handler) {
 		if (iqHandlers.contains(handler)) {
-			throw new IllegalArgumentException("IQHandler already provided by the server");
+			throw new IllegalArgumentException(
+					"IQHandler already provided by the server");
 		}
 		namespace2Handlers.put(handler.getNamespace(), handler);
 	}
@@ -184,11 +201,13 @@ public class IQRouter {
 	 * 
 	 * 清除IQHander，包括[List,Map]
 	 * 
-	 * @param handler the IQHandler
+	 * @param handler
+	 *            the IQHandler
 	 */
 	public void removeHandler(IQHandler handler) {
 		if (iqHandlers.contains(handler)) {
-			throw new IllegalArgumentException("Cannot remove an IQHandler provided by the server");
+			throw new IllegalArgumentException(
+					"Cannot remove an IQHandler provided by the server");
 		}
 		namespace2Handlers.remove(handler.getNamespace());
 	}
