@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.androidpn.server.util.Config;
 import org.androidpn.server.xmpp.net.Connection;
 import org.androidpn.server.xmpp.net.ConnectionCloseListener;
 import org.apache.commons.logging.Log;
@@ -34,7 +35,7 @@ import org.xmpp.packet.JID;
 /** 
  * This class manages the sessions connected to the server.
  * 
- * 管理客户端和服务器的连接
+ * 管理客户端和服务器的连接,统计client的在线状态
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
@@ -45,7 +46,7 @@ public class SessionManager {
 	private static final String RESOURCE_NAME = "AndroidpnClient";
 
 	private static SessionManager instance;
-
+	//
 	private String serverName;
 
 	private Map<String, ClientSession> preAuthSessions = new ConcurrentHashMap<String, ClientSession>();
@@ -57,7 +58,7 @@ public class SessionManager {
 	private ClientSessionListener clientSessionListener = new ClientSessionListener();
 
 	private SessionManager() {
-//		serverName = XmppServer.getInstance().getServerName();
+		serverName = Config.getString("xmpp.domain", "127.0.0.1").toLowerCase();
 	}
 
 	/**

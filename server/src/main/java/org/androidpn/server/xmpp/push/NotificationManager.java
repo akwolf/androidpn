@@ -37,81 +37,97 @@ import org.xmpp.packet.IQ;
 @Component
 public class NotificationManager {
 
-    private static final String NOTIFICATION_NAMESPACE = "androidpn:iq:notification";
+	private static final String NOTIFICATION_NAMESPACE = "androidpn:iq:notification";
 
-    private final Log log = LogFactory.getLog(getClass());
+	private final Log log = LogFactory.getLog(getClass());
 
-    private SessionManager sessionManager;
+	private SessionManager sessionManager;
 
-    /**
-     * Constructor.
-     */
-    public NotificationManager() {
-        sessionManager = SessionManager.getInstance();
-    }
+	/**
+	 * Constructor.
+	 */
+	public NotificationManager() {
+		sessionManager = SessionManager.getInstance();
+	}
 
-    /**
-     * Broadcasts a newly created notification message to all connected users.
-     * 
-     * @param apiKey the API key
-     * @param title the title
-     * @param message the message details
-     * @param uri the uri
-     */
-    public void sendBroadcast(String apiKey, String title, String message,
-            String uri) {
-        log.debug("sendBroadcast()...");
-        IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
-        for (ClientSession session : sessionManager.getSessions()) {
-            if (session.getPresence().isAvailable()) {
-                notificationIQ.setTo(session.getAddress());
-                session.deliver(notificationIQ);
-            }
-        }
-    }
+	/**
+	 * Broadcasts a newly created notification message to all connected users.
+	 * 
+	 * 对所有连接的client广播一个新建的通知信息
+	 * 
+	 * @param apiKey the API key
+	 * @param title the title
+	 * @param message the message details
+	 * @param uri the uri 回调的uri
+	 */
+	public void sendBroadcast(String apiKey, String title, String message, String uri) {
+		log.debug("sendBroadcast()...");
 
-    /**
-     * Sends a newly created notification message to the specific user.
-     * 
-     * @param apiKey the API key
-     * @param title the title
-     * @param message the message details
-     * @param uri the uri
-     */
-    public void sendNotifcationToUser(String apiKey, String username,
-            String title, String message, String uri) {
-        log.debug("sendNotifcationToUser()...");
-        IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
-        ClientSession session = sessionManager.getSession(username);
-        if (session != null) {
-            if (session.getPresence().isAvailable()) {
-                notificationIQ.setTo(session.getAddress());
-                session.deliver(notificationIQ);
-            }
-        }
-    }
+		IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
+		for (ClientSession session : sessionManager.getSessions()) {
+			if (session.getPresence().isAvailable()) {
+				notificationIQ.setTo(session.getAddress());
+				session.deliver(notificationIQ);
+			}
+		}
+	}
 
-    /**
-     * Creates a new notification IQ and returns it.
-     */
-    private IQ createNotificationIQ(String apiKey, String title,
-            String message, String uri) {
-        Random random = new Random();
-        String id = Integer.toHexString(random.nextInt());
-        // String id = String.valueOf(System.currentTimeMillis());
+	/**
+	 * Sends a newly created notification message to the specific user.
+	 * 
+	 * 对指定的用户发送推送通知
+	 * 
+	 * @param apiKey the API key
+	 * @param title the title
+	 * @param message the message details
+	 * @param uri the uri
+	 */
+	public void sendNotifcationToUser(String apiKey, String username, String title, String message, String uri) {
+		log.debug("sendNotifcationToUser()...");
+		IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
+		ClientSession session = sessionManager.getSession(username);
+		if (session != null) {
+			if (session.getPresence().isAvailable()) {
+				notificationIQ.setTo(session.getAddress());
+				session.deliver(notificationIQ);
+			}
+		}
+	}
 
-        Element notification = DocumentHelper.createElement(QName.get(
-                "notification", NOTIFICATION_NAMESPACE));
-        notification.addElement("id").setText(id);
-        notification.addElement("apiKey").setText(apiKey);
-        notification.addElement("title").setText(title);
-        notification.addElement("message").setText(message);
-        notification.addElement("uri").setText(uri);
+	/**
+	 * Creates a new notification IQ and returns it.
+	 * 
+	 * 创建一个新的通知消息
+	 * <code>
+	 * <iq type="set" id="546-0">
+	 * 	  <notification xmlns="androidpn:iq:notification">
+	 * 	    <id>6c5358db</id>
+	 * 	    <apiKey>123456</apiKey>
+	 * 	    <title>title</title>
+	 * 	    <message>message</message>
+	 * 	    <uri>uri</uri>
+	 * 	  </notification>
+	 * </iq>
+	 * </code>
+	 * 
+	 * 
+	 */
+	private IQ createNotificationIQ(String apiKey, String title, String message, String uri) {
+		Random random = new Random();
+		String id = Integer.toHexString(random.nextInt());
+		// String id = String.valueOf(System.currentTimeMillis());
 
-        IQ iq = new IQ();
-        iq.setType(IQ.Type.set);
-        iq.setChildElement(notification);
+		Element notification = DocumentHelper.createElement(QName.get("notification", NOTIFICATION_NAMESPACE));
+		notification.addElement("id").setText(id);
+		notification.addElement("apiKey").setText(apiKey);
+		notification.addElement("title").setText(title);
+		notification.addElement("message").setText(message);
+		notification.addElement("uri").setText(uri);
 
-        return iq;
-    }
+		IQ iq = new IQ();
+		iq.setType(IQ.Type.set);
+		iq.setChildElement(notification);
+
+		return iq;
+	}
 }

@@ -48,6 +48,7 @@ public class IQAuthHandler extends IQHandler {
      * Constructor.
      */
     public IQAuthHandler() {
+    	// <query xmlns="jabber:iq:auth"><username/><password/><digest/></query>
         probeResponse = DocumentHelper.createElement(QName.get("query",
                 NAMESPACE));
         probeResponse.addElement("username");
@@ -73,6 +74,7 @@ public class IQAuthHandler extends IQHandler {
         ClientSession session = sessionManager.getSession(packet.getFrom());
         if (session == null) {
             log.error("Session not found for key " + packet.getFrom());
+            
             reply = IQ.createResultIQ(packet);
             reply.setChildElement(packet.getChildElement().createCopy());
             reply.setError(PacketError.Condition.internal_server_error);

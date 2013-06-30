@@ -53,6 +53,7 @@ public class IQRegisterHandler extends IQHandler {
 	 * Constructor.
 	 */
 	public IQRegisterHandler() {
+		// <query xmlns="jabber:iq:register"><username/><password/><email/><name/></query>
 		probeResponse = DocumentHelper.createElement(QName.get("query", NAMESPACE));
 		probeResponse.addElement("username");
 		probeResponse.addElement("password");
