@@ -17,13 +17,19 @@
  */
 package org.androidpn.server.xmpp.router;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xmpp.packet.Message;
 
 /** 
  * This class is to route Message packets to their corresponding handler.
+ * 
+ * 将message包路由到对应的处理器(handler)上
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+@Component
+@Scope("prototype")
 public class MessageRouter {
 
     /**

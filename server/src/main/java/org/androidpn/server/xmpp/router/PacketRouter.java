@@ -17,6 +17,7 @@
  */
 package org.androidpn.server.xmpp.router;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
@@ -24,28 +25,37 @@ import org.xmpp.packet.Presence;
 
 /** 
  * This class is to handle incoming packets and route them to their corresponding handler.
+ * 
+ * 接收包路由器
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class PacketRouter {
 
+	@Autowired
     private MessageRouter messageRouter;
 
+	@Autowired
     private PresenceRouter presenceRouter;
 
+	@Autowired
     private IQRouter iqRouter;
 
+	
+	
     /**
      * Constructor. 
      */
     public PacketRouter() {
-        messageRouter = new MessageRouter();
-        presenceRouter = new PresenceRouter();
-        iqRouter = new IQRouter();
+//        messageRouter = new MessageRouter();
+//        presenceRouter = new PresenceRouter();
+//        iqRouter = new IQRouter();
     }
 
     /**
      * Routes the packet based on its type.
+     * 
+     * 对不同类型的包进行路由
      * 
      * @param packet the packet to route
      */
@@ -63,6 +73,8 @@ public class PacketRouter {
 
     /**
      * Routes the IQ packet.
+     * 
+     *对IQ类型包进行路由
      * 
      * @param packet the packet to route
      */

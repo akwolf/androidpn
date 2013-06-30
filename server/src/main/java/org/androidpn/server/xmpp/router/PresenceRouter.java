@@ -23,21 +23,30 @@ import org.androidpn.server.xmpp.session.Session;
 import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
 import org.xmpp.packet.Presence;
 
 /** 
  * This class is to route Presence packets to their corresponding handler.
+ * 
+ * 路由Presence包到相应的处理器(handler)
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+@Component
+@Scope("prototype")
 public class PresenceRouter {
 
     private final Log log = LogFactory.getLog(getClass());
 
     private SessionManager sessionManager;
 
+    /** 在线状态更新处理器 */
+    @Autowired
     private PresenceUpdateHandler presenceUpdateHandler;
 
     /**
@@ -45,7 +54,7 @@ public class PresenceRouter {
      */
     public PresenceRouter() {
         sessionManager = SessionManager.getInstance();
-        presenceUpdateHandler = new PresenceUpdateHandler();
+//        presenceUpdateHandler = new PresenceUpdateHandler();
     }
 
     /**
@@ -57,11 +66,14 @@ public class PresenceRouter {
         if (packet == null) {
             throw new NullPointerException();
         }
+        // 根据发送包的jid查询建立连接的会话(session)
         ClientSession session = sessionManager.getSession(packet.getFrom());
 
+        // 当没有建立连接且状态为非连接状态，进行Presence包处理
         if (session == null || session.getStatus() != Session.STATUS_CONNECTED) {
             handle(packet);
         } else {
+        	// 返回未授权错误
             packet.setTo(session.getAddress());
             packet.setFrom((JID) null);
             packet.setError(PacketError.Condition.not_authorized);
@@ -71,6 +83,7 @@ public class PresenceRouter {
 
     private void handle(Presence packet) {
         try {
+        	// 取得信息包类型
             Presence.Type type = packet.getType();
             // Presence updates (null == 'available')
             if (type == null || Presence.Type.unavailable == type) {
@@ -81,6 +94,7 @@ public class PresenceRouter {
 
         } catch (Exception e) {
             log.error("Could not route packet", e);
+            // 出现异常关闭会话
             Session session = sessionManager.getSession(packet.getFrom());
             if (session != null) {
                 session.close();

@@ -27,6 +27,9 @@ import org.xmpp.packet.Packet;
 
 /** 
  * This class is to deliver the packets to the connected sessions. 
+ * 
+ * 通过与服务器建立连接(connection)的会话(session)消息包发送到相应的客户端
+ * 调用顺序PackageDeliverer--->Session--->Connection
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
@@ -37,6 +40,8 @@ public class PacketDeliverer {
     /**
      * Delivers the packet to the packet recipient.  
      * 
+     * 消息发送给消息接受者
+     * 
      * @param packet the packet to deliver
      * @throws PacketException if the packet is null or the recipient was not found.
      */
@@ -46,11 +51,15 @@ public class PacketDeliverer {
         }
 
         try {
+        	// 取得接受者的jid
             JID recipient = packet.getTo();
             if (recipient != null) {
+            	// 取得消息接受者的session
                 ClientSession clientSession = SessionManager.getInstance()
                         .getSession(recipient);
+                // 如果客户端和有建立会话
                 if (clientSession != null) {
+                	// 向客户端会话中发送消息
                     clientSession.deliver(packet);
                 }
             }

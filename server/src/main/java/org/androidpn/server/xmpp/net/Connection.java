@@ -109,11 +109,13 @@ public class Connection {
 		synchronized (this) {
 			if (!isClosed()) {
 				try {
+					// 发送服务器结束符
 					deliverRawText("</stream:stream>", false);
 				} catch (Exception e) {
 					// Ignore
 				}
 				if (session != null) {
+					// 设置会话为关闭状态
 					session.setStatus(Session.STATUS_CLOSED);
 				}
 				ioSession.close(false);
@@ -122,12 +124,15 @@ public class Connection {
 			}
 		}
 		if (closedSuccessfully) {
+			// 成功关闭会话，则通知关闭监听器
 			notifyCloseListeners();
 		}
 	}
 
 	/**
 	 * Sends notification message indicating that the server is being shutdown.
+	 * 向客户端发送服务器关闭的消息
+	 * 
 	 */
 	public void systemShutdown() {
 		deliverRawText("<stream:error><system-shutdown "
@@ -167,6 +172,8 @@ public class Connection {
 
 	/**
 	 * Registers a listener for close event notification.
+	 * 
+	 * 注册会话关闭监听器
 	 * 
 	 * @param listener the listener to register for close events.
 	 */
@@ -209,25 +216,32 @@ public class Connection {
 	 */
 	public void deliver(Packet packet) {
 		log.debug("SENT: " + packet.toXML());
+		// connection 没有被关闭
 		if (!isClosed()) {
+			// 初始化缓冲区
 			IoBuffer buffer = IoBuffer.allocate(4096);
 			buffer.setAutoExpand(true);
-
+			
+			// 发送错误标志位
 			boolean errorDelivering = false;
 			try {
+				// 初始化xml输出器
 				XMLWriter xmlSerializer = new XMLWriter(new IoBufferWriter(buffer, (CharsetEncoder) encoder.get()),
 						new OutputFormat());
 				xmlSerializer.write(packet.getElement());
 				xmlSerializer.flush();
 				buffer.flip();
+				// 向客户端回写信息包
 				ioSession.write(buffer);
 			} catch (Exception e) {
 				log.debug("Connection: Error delivering packet" + "\n" + this.toString(), e);
 				errorDelivering = true;
 			}
+			// 发生错误时
 			if (errorDelivering) {
 				close();
 			} else {
+				// 服务器发送的包计数+1
 				session.incrementServerPacketCount();
 			}
 		}

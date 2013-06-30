@@ -29,6 +29,8 @@ import org.androidpn.server.xmpp.session.Session;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
@@ -38,6 +40,8 @@ import org.xmpp.packet.PacketError;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+@Component
+@Scope("prototype")
 public class IQAuthHandler extends IQHandler {
 
     private static final String NAMESPACE = "jabber:iq:auth";

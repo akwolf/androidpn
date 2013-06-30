@@ -31,6 +31,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
@@ -40,6 +42,8 @@ import org.xmpp.packet.PacketError;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+@Component
+@Scope("prototype")
 public class IQRegisterHandler extends IQHandler {
 
 	private static final String NAMESPACE = "jabber:iq:register";

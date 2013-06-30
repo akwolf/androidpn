@@ -33,6 +33,10 @@ import org.xmpp.packet.Packet;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+/**
+ * @author Administrator
+ *
+ */
 public abstract class Session {
 
     public static final int MAJOR_VERSION = 1;
@@ -66,14 +70,18 @@ public abstract class Session {
 
     private String streamID;
 
+    /** 初始化为连接状态 */
     private int status = STATUS_CONNECTED;
 
+    /** session创建时间 */
     private long startDate = System.currentTimeMillis();
 
+    /** session最后活跃时间 */
     private long lastActiveDate;
 
     private long clientPacketCount = 0;
 
+    /** 服务器发送的包数目 */
     private long serverPacketCount = 0;
 
     private final Map<String, Object> sessionData = new HashMap<String, Object>();
@@ -241,6 +249,8 @@ public abstract class Session {
 
     /**
      * Delivers the packet to the associated connection.
+     * 
+     * 通过关联的connection发送消息包
      * 
      * @param packet the packet to deliver
      */

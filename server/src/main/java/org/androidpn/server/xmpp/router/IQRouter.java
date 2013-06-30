@@ -32,6 +32,8 @@ import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
@@ -39,20 +41,30 @@ import org.xmpp.packet.PacketError;
 /** 
  * This class is to route IQ packets to their corresponding handler.
  * 
- * 对IQ进行路由，交付对应的处理器
+ * 对IQ进行路由，交付对应的处理器(handler)
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
+@Component
+@Scope("prototype")
 public class IQRouter {
 
 	private final Log log = LogFactory.getLog(getClass());
 
 	private SessionManager sessionManager;
 
+	/** iqHandler列表 */
 	private List<IQHandler> iqHandlers = new ArrayList<IQHandler>();
 
+	/** namespace与IQHandler缓存器 */
 	private Map<String, IQHandler> namespace2Handlers = new ConcurrentHashMap<String, IQHandler>();
 
+	private IQHandler iqHandler ;
+	
+	private IQRegisterHandler iqRegisterHandler ;
+	
+	private IQRosterHandler iqRosterHandler  ;
+	
 	/**
 	 * Constucts a packet router registering new IQ handlers.
 	 */
@@ -72,7 +84,9 @@ public class IQRouter {
 		if (packet == null) {
 			throw new NullPointerException();
 		}
+		// 取得发送者的jid
 		JID sender = packet.getFrom();
+		// 根据jid查询对应的clientSession
 		ClientSession session = sessionManager.getSession(sender);
 
 		if (session == null
@@ -80,8 +94,10 @@ public class IQRouter {
 				|| ("jabber:iq:auth".equals(packet.getChildElement().getNamespaceURI())
 						|| "jabber:iq:register".equals(packet.getChildElement().getNamespaceURI()) || "urn:ietf:params:xml:ns:xmpp-bind"
 							.equals(packet.getChildElement().getNamespaceURI()))) {
+			// 处理IQ包
 			handle(packet);
 		} else {
+			// 创建错误的IQ返回信息包
 			IQ reply = IQ.createResultIQ(packet);
 			reply.setChildElement(packet.getChildElement().createCopy());
 			reply.setError(PacketError.Condition.not_authorized);
@@ -91,20 +107,28 @@ public class IQRouter {
 
 	private void handle(IQ packet) {
 		try {
+			// 取得<iq>元素中的内容
+			// namespace不在["",jabber:client,jabber:server]的元素
 			Element childElement = packet.getChildElement();
 			String namespace = null;
 			if (childElement != null) {
+				// 取得子元素的namespace
 				namespace = childElement.getNamespaceURI();
 			}
+			// 返回类型的IQ
 			if (namespace == null) {
+				// 返回类型的IQ类型不为result,error为未知包
 				if (packet.getType() != IQ.Type.result && packet.getType() != IQ.Type.error) {
 					log.warn("Unknown packet " + packet);
 				}
 			} else {
+				// 取得消息处理器
 				IQHandler handler = getHandler(namespace);
+				// 该消息对应的处理器(Handler)不存在
 				if (handler == null) {
 					sendErrorPacket(packet, PacketError.Condition.service_unavailable);
 				} else {
+					// 消息处理器进行消息处理
 					handler.process(packet);
 				}
 			}
@@ -121,7 +145,10 @@ public class IQRouter {
 	}
 
 	/**
-	 * Senda the error packet to the original sender
+	 * Send the error packet to the original sender
+	 * 
+	 * 将错误消息返回给发送者
+	 * 
 	 */
 	private void sendErrorPacket(IQ originalPacket, PacketError.Condition condition) {
 		if (IQ.Type.error == originalPacket.getType()) {
@@ -141,6 +168,8 @@ public class IQRouter {
 	/**
 	 * Adds a new IQHandler to the list of registered handler.
 	 * 
+	 * 添加一个IQHandler到List中若已经添加过则跑出异常
+	 * 
 	 * @param handler the IQHandler
 	 */
 	public void addHandler(IQHandler handler) {
@@ -153,6 +182,8 @@ public class IQRouter {
 	/**
 	 * Removes an IQHandler from the list of registered handler.
 	 * 
+	 * 清除IQHander，包括[List,Map]
+	 * 
 	 * @param handler the IQHandler
 	 */
 	public void removeHandler(IQHandler handler) {
@@ -164,9 +195,14 @@ public class IQRouter {
 
 	/**
 	 * Returns an IQHandler with the given namespace.
+	 * 
+	 * 根据namespace取得对应的Handler
 	 */
 	private IQHandler getHandler(String namespace) {
+		// 根据namespace获取IQHandler
 		IQHandler handler = namespace2Handlers.get(namespace);
+		// 如果 IQHandler缓存中未找到，则从iqHandlers(List)中进行对比匹配，并添加到IQHandler缓存器中
+		// IQHandler在此处进行初始化
 		if (handler == null) {
 			for (IQHandler handlerCandidate : iqHandlers) {
 				if (namespace.equalsIgnoreCase(handlerCandidate.getNamespace())) {
