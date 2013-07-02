@@ -141,6 +141,5 @@
 			<groupId>org.fitnesse</groupId>
 			<artifactId>fitnesse</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>

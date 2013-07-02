@@ -39,31 +39,40 @@ public class XMLLightweightParser {
 	private static int maxBufferSize;
 
 	// Chars that rappresent CDATA section start
+	// CDATA 开始符号
 	protected static char[] CDATA_START = { '<', '!', '[', 'C', 'D', 'A', 'T', 'A', '[' };
 
 	// Chars that rappresent CDATA section end
+	// CDATA 结束符号
 	protected static char[] CDATA_END = { ']', ']', '>' };
 
 	// Buffer with all data retrieved
+	/** 接受到的数据 */
 	protected StringBuilder buffer = new StringBuilder();
 
 	// ---- INTERNAL STATUS -------
 	// Initial status
+	/** 初始状态 */
 	protected static final int INIT = 0;
 
 	// Status used when the first tag name is retrieved
+	/** 第一个tag收到时 */
 	protected static final int HEAD = 2;
 
 	// Status used when robot is inside the xml and it looking for the tag conclusion
+	/** 结束标志位 */
 	protected static final int INSIDE = 3;
 
 	// Status used when a '<' is found and try to find the conclusion tag.
+	// 当'<'被发现，试图找到结束标记时的状态
 	protected static final int PRETAIL = 4;
 
 	// Status used when the ending tag is equal to the head tag
+	// 结束标签和开始标签匹配时
 	protected static final int TAIL = 5;
 
 	// Status used when robot is inside the main tag and found an '/' to check '/>'.
+	// 当在遍历寻找'/'用来检查'/>'
 	protected static final int VERIFY_CLOSE_TAG = 6;
 
 	//  Status used when you are inside a parameter
@@ -82,6 +91,7 @@ public class XMLLightweightParser {
 	protected int status = XMLLightweightParser.INIT;
 
 	// Index to looking for a CDATA section start or end.
+	// 寻找CDATA部分是的起始或结束索引
 	protected int cdataOffset = 0;
 
 	// Number of chars that machs with the head tag. If the tailCount is equal to
@@ -112,6 +122,10 @@ public class XMLLightweightParser {
 		maxBufferSize = 1048576;
 		// Listen for changes to this property
 		PropertyEventDispatcher.addListener(new PropertyListener());
+	}
+
+	public XMLLightweightParser() {
+		this("UTF-8");
 	}
 
 	public XMLLightweightParser(String charset) {

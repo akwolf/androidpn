@@ -47,6 +47,7 @@ public class SessionController {
         //userService = ServiceLocator.getUserService();
     }
 
+    @RequestMapping
     public ModelAndView list(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         ClientSession[] sessions = new ClientSession[0];

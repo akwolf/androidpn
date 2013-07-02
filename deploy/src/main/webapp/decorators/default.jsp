@@ -26,7 +26,7 @@
 		</div>
 		<div id="content">
 			<ul id="tabmenu">
-				<li><a href="index.do/index"
+				<li><a href="index.do"
 					class="<c:if test="${topMenu eq 'home'}"><c:out value="current" /></c:if>">Home</a></li>
 				<li><a href="user.do"
 					class="<c:if test="${topMenu eq 'user'}"><c:out value="current" /></c:if>">Users</a></li>

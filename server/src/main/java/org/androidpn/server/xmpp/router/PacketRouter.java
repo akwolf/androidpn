@@ -47,9 +47,6 @@ public class PacketRouter {
      * Constructor. 
      */
     public PacketRouter() {
-//        messageRouter = new MessageRouter();
-//        presenceRouter = new PresenceRouter();
-//        iqRouter = new IQRouter();
     }
 
     /**

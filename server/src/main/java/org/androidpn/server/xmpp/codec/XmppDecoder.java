@@ -40,8 +40,10 @@ public class XmppDecoder extends CumulativeProtocolDecoder {
             ProtocolDecoderOutput out) throws Exception {
         // log.debug("doDecode(...)...");
 
+    	// 从session中查找一个parser
         XMLLightweightParser parser = (XMLLightweightParser) session
                 .getAttribute(XmppIoHandler.XML_PARSER);
+        
         parser.read(in);
 
         if (parser.areThereMsgs()) {

@@ -31,7 +31,7 @@
 	</logger>
 
 	<logger name="org.springframework">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 
 	<logger name="org.aspectj.weaver">
@@ -41,10 +41,10 @@
 	<logger name="org.directwebremoting">
 		<level value="INFO" />
 	</logger>
-	
+
 	<logger name="org.mortbay.log">
 		<level value="INFO" />
-	</logger>	
+	</logger>
 
 	<logger name="org.hibernate">
 		<level value="INFO" />

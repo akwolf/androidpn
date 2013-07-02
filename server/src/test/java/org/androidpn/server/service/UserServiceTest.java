@@ -17,14 +17,14 @@ public class UserServiceTest extends JTester {
 	@SpringBeanByType
 	UserService userService;
 
-//	public void testSaveUser() throws UserExistsException {
-//		User user = new User();
-//		user.setEmail("zhangh@justsy.com");
-//		user.setName("zhangh");
-//		user.setPassword("123456");
-//		user.setUsername("zhangh");
-//		User c = userService.saveUser(user);
-//		System.out.println(c + ",id=" + user.getId());
-//		want.number(c.getId()).isGt(0L);
-//	}
+	public void testSaveUser() throws UserExistsException {
+		User user = new User();
+		user.setEmail("zhangh@justsy.com");
+		user.setName("zhangh");
+		user.setPassword("123456");
+		user.setUsername("zhangh");
+		User c = userService.saveUser(user);
+		System.out.println(c + ",id=" + user.getId());
+		want.number(c.getId()).isGt(0L);
+	}
 }

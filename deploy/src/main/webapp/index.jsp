@@ -1,7 +1,7 @@
+<jsp:forward page="index.do" />
 
 <html>
-
 <body>
-<h1>Hello</h1>
+<a href="index.do?action=index">index</a>
 </body>
 </html>

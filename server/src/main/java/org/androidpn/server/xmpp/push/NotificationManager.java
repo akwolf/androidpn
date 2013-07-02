@@ -98,7 +98,7 @@ public class NotificationManager {
 	 * Creates a new notification IQ and returns it.
 	 * 
 	 * 创建一个新的通知消息
-	 * <code>
+	 * <pre>
 	 * <iq type="set" id="546-0">
 	 * 	  <notification xmlns="androidpn:iq:notification">
 	 * 	    <id>6c5358db</id>
@@ -108,7 +108,7 @@ public class NotificationManager {
 	 * 	    <uri>uri</uri>
 	 * 	  </notification>
 	 * </iq>
-	 * </code>
+	 * </pre>
 	 * 
 	 * 
 	 */

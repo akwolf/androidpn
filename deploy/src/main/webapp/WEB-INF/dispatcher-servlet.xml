@@ -12,10 +12,11 @@ http://www.springframework.org/schema/mvc
 http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 
-	<context:component-scan base-package="org.androidpn.server.console.controller" />
+	<!-- <context:component-scan base-package="org.androidpn.server.console.controller" 
+		/> <context:annotation-config /> -->
 
-	<context:annotation-config />
-	<mvc:default-servlet-handler />
+	<!-- 对项目目录进行映射 -->
+	<mvc:view-controller path="/" view-name="index.do" />
 
 	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 -->
 	<bean

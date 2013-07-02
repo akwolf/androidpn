@@ -53,6 +53,10 @@ public class XMPPPacketReader {
     /**
      * Last time a full Document was read or a heartbeat was received. Hearbeats
      * are represented as whitespaces received while a Document is not being parsed.
+     * 
+     * 文档最后处理或最后心跳时间
+     * 当文档没有被处理时，心跳被当做一个空格符收到
+     * 
      */
     private long lastActive = System.currentTimeMillis();
 
@@ -60,9 +64,9 @@ public class XMPPPacketReader {
     public XMPPPacketReader() {
     }
 
-    public XMPPPacketReader(DocumentFactory factory) {
-        this.factory = factory;
-    }
+//    public XMPPPacketReader(DocumentFactory factory) {
+//        this.factory = factory;
+//    }
 
 
     /**

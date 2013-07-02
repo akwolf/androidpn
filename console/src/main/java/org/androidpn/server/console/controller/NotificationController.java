@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /** 
@@ -48,12 +49,14 @@ public class NotificationController {
 		//		notificationManager = new NotificationManager();
 	}
 
-	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	@RequestMapping("/list")
+	public ModelAndView list() throws Exception {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("notification/form");
 		return mav;
 	}
 
+	@RequestMapping(value = "/send", method = RequestMethod.POST)
 	public ModelAndView send(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String broadcast = ServletRequestUtils.getStringParameter(request, "broadcast", "Y");
 		String username = ServletRequestUtils.getStringParameter(request, "username");
@@ -69,7 +72,7 @@ public class NotificationController {
 		} else {
 			notificationManager.sendNotifcationToUser(apiKey, username, title, message, uri);
 		}
-
+		System.out.println("send!!");
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("redirect:notification.do");
 		return mav;

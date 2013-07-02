@@ -11,9 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/index.do")
 public class IndexController {
-
+	@RequestMapping
 	public ModelAndView index() {
-
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("index");
 		return mav;

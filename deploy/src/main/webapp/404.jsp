@@ -5,7 +5,7 @@
     <title>Page Not Found</title>
 </head>
 <body>
-	<h1>Page Not Found</h1>
+	<h1>Page Not Found!!</h1>
 	<p></p>
 </body>
 </page:applyDecorator>
