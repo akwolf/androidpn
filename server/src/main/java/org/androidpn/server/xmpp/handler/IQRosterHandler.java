@@ -22,11 +22,12 @@ import org.xmpp.packet.IQ;
 
 /** 
  * This class is to handle the TYPE_IQ jabber:iq:roster protocol.
+ * 
+ * 获取用户列表，暂时未实现此功能
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-//@Component
-//@Scope("prototype")
+
 public class IQRosterHandler extends IQHandler {
 
 	private static final String NAMESPACE = "jabber:iq:roster";

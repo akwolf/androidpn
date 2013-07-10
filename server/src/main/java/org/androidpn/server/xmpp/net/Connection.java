@@ -161,7 +161,6 @@ public class Connection {
 		return session.getStatus() == Session.STATUS_CLOSED;
 	}
 
-
 	/**
 	 * Registers a listener for close event notification.
 	 * 
@@ -213,7 +212,7 @@ public class Connection {
 			// 初始化缓冲区
 			IoBuffer buffer = IoBuffer.allocate(4096);
 			buffer.setAutoExpand(true);
-			
+
 			// 发送错误标志位
 			boolean errorDelivering = false;
 			try {
@@ -293,9 +292,9 @@ public class Connection {
 		SSLContext tlsContext = SSLContext.getInstance("TLS");
 		tlsContext.init(km, tm, null);
 
+		// 添加ssl过滤器
 		SslFilter filter = new SslFilter(tlsContext);
 		ioSession.getFilterChain().addFirst("tls", filter);
-		//ioSession.getFilterChain().addBefore("executor", "tls", filter);
 		ioSession.setAttribute(SslFilter.DISABLE_ENCRYPTION_ONCE, Boolean.TRUE);
 
 		deliverRawText("<proceed xmlns=\"urn:ietf:params:xml:ns:xmpp-tls\"/>");
@@ -376,7 +375,7 @@ public class Connection {
 		this.language = language;
 	}
 
-//	@SuppressWarnings("rawtypes")
+	//	@SuppressWarnings("rawtypes")
 	private static class ThreadLocalEncoder extends ThreadLocal<Object> {
 		protected Object initialValue() {
 			return Charset.forName("UTF-8").newEncoder();

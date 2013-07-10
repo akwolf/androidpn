@@ -41,7 +41,6 @@ import org.xmpp.packet.Presence;
 @RequestMapping("/session.do")
 public class SessionController {
 
-
 	@RequestMapping
 	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ClientSession[] sessions = new ClientSession[0];
@@ -67,6 +66,7 @@ public class SessionController {
 			if (!sess.getPresence().isAvailable()) {
 				vo.setPresence("Offline");
 			} else {
+				// 在线状态
 				Presence.Show show = sess.getPresence().getShow();
 				if (show == null) {
 					vo.setPresence("Online");

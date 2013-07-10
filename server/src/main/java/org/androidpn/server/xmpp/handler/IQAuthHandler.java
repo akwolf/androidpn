@@ -38,8 +38,7 @@ import org.xmpp.packet.PacketError;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-//@Component
-//@Scope("prototype")
+
 public class IQAuthHandler extends IQHandler {
 
 	private static final String NAMESPACE = "jabber:iq:auth";

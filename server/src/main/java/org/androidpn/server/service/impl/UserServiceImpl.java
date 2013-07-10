@@ -43,12 +43,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserMapper userDao;
 	
-	/**
-	 * 
-	 */
-	public UserServiceImpl() {
-		System.out.println("--------------------");
-	}
 
 	public void setUserDao(UserMapper userDao) {
 		this.userDao = userDao;

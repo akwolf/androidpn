@@ -53,7 +53,6 @@ public class XmppServer implements ApplicationContextAware {
 	 * @return the server instance.
 	 */
 	public static XmppServer getInstance() {
-		// return instance;
 		if (instance == null) {
 			synchronized (XmppServer.class) {
 				instance = new XmppServer();

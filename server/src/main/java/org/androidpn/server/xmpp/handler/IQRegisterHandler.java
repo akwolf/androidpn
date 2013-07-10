@@ -39,6 +39,8 @@ import org.xmpp.packet.PacketError;
 
 /** 
  * This class is to handle the TYPE_IQ jabber:iq:register protocol.
+ * 
+ * 设备注册，到数据库
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
@@ -48,7 +50,6 @@ public class IQRegisterHandler extends IQHandler {
 
 	private static final String NAMESPACE = "jabber:iq:register";
 
-	//	@Autowired
 	private UserService userService;
 
 	private Element probeResponse;
@@ -75,7 +76,7 @@ public class IQRegisterHandler extends IQHandler {
 	 */
 	public IQ handleIQ(IQ packet) throws UnauthorizedException {
 
-		log.debug("userService --------->" + userService);
+		//		log.debug("userService --------->" + userService);
 
 		IQ reply = null;
 
@@ -142,6 +143,7 @@ public class IQRegisterHandler extends IQHandler {
 					user.setPassword(password);
 					user.setEmail(email);
 					user.setName(name);
+					// 入库
 					userService.saveUser(user);
 
 					reply = IQ.createResultIQ(packet);

@@ -37,6 +37,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
  * received XML stanzas to the StanzaHandler.
  * 
  * 用来和管理会话，连接、销毁将收到的XML stanzas 交给StanzasHandler处理，
+ * 
+ * Xmpp 连接主入口
+ * 
+ * 重要方法
+ * sessionOpened
+ * messageReceived
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
@@ -52,6 +58,7 @@ public class XmppIoHandler implements IoHandler {
 
 	private String serverName;
 
+	/** xmpp解析器 */
 	private static Map<Integer, XMPPPacketReader> parsers = new ConcurrentHashMap<Integer, XMPPPacketReader>();
 
 	private static XmlPullParserFactory factory = null;
@@ -135,18 +142,23 @@ public class XmppIoHandler implements IoHandler {
 
 	/**
 	 * Invoked when a message is received.
+	 * 
+	 * 收到消息交由router处理
+	 * 
 	 */
 	public void messageReceived(IoSession session, Object message) throws Exception {
-		log.debug("messageReceived()...,IoSession : " + session );
+		log.debug("messageReceived()...,IoSession : " + session);
 		log.debug("RCVD: " + message);
 
 		// Get the stanza handler
 		StanzaHandler handler = (StanzaHandler) session.getAttribute(STANZA_HANDLER);
 
-//		log.debug("StanzaHandler : " + handler);
+		//		log.debug("StanzaHandler : " + handler);
 
 		// Get the XMPP packet parser
 		int hashCode = Thread.currentThread().hashCode();
+		// 从缓存器中取出解析器，有直接取出，没有进行缓存
+		// 一线程对应一解析器
 		XMPPPacketReader parser = parsers.get(hashCode);
 		if (parser == null) {
 			parser = new XMPPPacketReader();

@@ -43,8 +43,6 @@ import org.xmpp.packet.PacketError;
  * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-//@Component
-//@Scope("prototype")
 public class IQRouter {
 
 	private final Log log = LogFactory.getLog(getClass());
@@ -58,13 +56,13 @@ public class IQRouter {
 	private Map<String, IQHandler> namespace2Handlers = new ConcurrentHashMap<String, IQHandler>();
 
 	//	@Autowired
-//	private IQAuthHandler iqAuthHandler;
+	//	private IQAuthHandler iqAuthHandler;
 
 	//	@Autowired
-//	private IQRegisterHandler iqRegisterHandler;
+	//	private IQRegisterHandler iqRegisterHandler;
 
 	//	@Autowired
-//	private IQRosterHandler iqRosterHandler;
+	//	private IQRosterHandler iqRosterHandler;
 
 	/**
 	 * Constucts a packet router registering new IQ handlers.
@@ -75,9 +73,9 @@ public class IQRouter {
 		iqHandlers.add(new IQRegisterHandler());
 		iqHandlers.add(new IQRosterHandler());
 
-//		iqHandlers.add(iqAuthHandler);
-//		iqHandlers.add(iqRegisterHandler);
-//		iqHandlers.add(iqRosterHandler);
+		//		iqHandlers.add(iqAuthHandler);
+		//		iqHandlers.add(iqRegisterHandler);
+		//		iqHandlers.add(iqRosterHandler);
 	}
 
 	/**
