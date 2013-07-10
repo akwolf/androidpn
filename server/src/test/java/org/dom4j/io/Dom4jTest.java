@@ -1,7 +1,6 @@
 package org.dom4j.io;
 
 import java.io.File;
-import java.net.URL;
 
 import org.dom4j.Document;
 import org.jtester.testng.JTester;
@@ -20,6 +19,6 @@ public class Dom4jTest extends JTester {
 		Document doc = reader.read(file);
 		System.out.println(doc.asXML());
 
-		URL url = new URL("http://www.apple.com/DTDs/PropertyList-1.0.dtd");
+//		URL url = new URL("http://www.apple.com/DTDs/PropertyList-1.0.dtd");
 	}
 }

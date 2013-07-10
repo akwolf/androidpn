@@ -18,8 +18,6 @@
 package org.androidpn.server.xmpp.handler;
 
 import org.androidpn.server.xmpp.UnauthorizedException;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 
 /** 
@@ -27,8 +25,8 @@ import org.xmpp.packet.IQ;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Component
-@Scope("prototype")
+//@Component
+//@Scope("prototype")
 public class IQRosterHandler extends IQHandler {
 
 	private static final String NAMESPACE = "jabber:iq:roster";

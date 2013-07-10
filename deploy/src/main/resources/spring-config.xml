@@ -10,14 +10,22 @@
             http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
             http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-	default-lazy-init="true">
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+	<!-- enable autowire -->
+	<context:annotation-config />
+	<!-- Enable @Transactional support -->
+	<tx:annotation-driven />
+	<!-- enable component scanning -->
+	<context:component-scan base-package="org.androidpn.server" />
 
 
 	<!-- =============================================================== -->
 	<!-- Spring MVC -->
 	<!-- =============================================================== -->
 	<mvc:annotation-driven />
+
 	<mvc:default-servlet-handler />
 	<mvc:resources location="/decorators/" mapping="/decorators/**" />
 	<mvc:resources location="/images/" mapping="/images/**" />
@@ -75,12 +83,7 @@
 		<property name="basePackage" value="org.androidpn.server.dao" />
 	</bean>
 
-	<!-- enable autowire -->
-	<context:annotation-config />
-	<!-- Enable @Transactional support -->
-	<tx:annotation-driven />
-	<!-- enable component scanning -->
-	<context:component-scan base-package="org.androidpn.server" />
+
 
 
 	<!-- =============================================================== -->
@@ -135,4 +138,9 @@
 		<property name="filterChainBuilder" ref="filterChainBuilder" />
 		<property name="reuseAddress" value="true" />
 	</bean>
+
+	<!-- =============================================================== -->
+	<!-- Beans -->
+	<!-- =============================================================== -->
+
 </beans>

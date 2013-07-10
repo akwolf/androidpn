@@ -33,25 +33,24 @@ import org.jivesoftware.openfire.nio.XMLLightweightParser;
  */
 public class XmppDecoder extends CumulativeProtocolDecoder {
 
-    // private final Log log = LogFactory.getLog(XmppDecoder.class);
+	// private final Log log = LogFactory.getLog(XmppDecoder.class);
 
-    @Override
-    public boolean doDecode(IoSession session, IoBuffer in,
-            ProtocolDecoderOutput out) throws Exception {
-        // log.debug("doDecode(...)...");
+	@Override
+	public boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+		// log.debug("doDecode(...)...");
 
-    	// 从session中查找一个parser
-        XMLLightweightParser parser = (XMLLightweightParser) session
-                .getAttribute(XmppIoHandler.XML_PARSER);
-        
-        parser.read(in);
+		// 从session中查找一个parser
+		// 在sessionOpened事件出发时放入
+		XMLLightweightParser parser = (XMLLightweightParser) session.getAttribute(XmppIoHandler.XML_PARSER);
 
-        if (parser.areThereMsgs()) {
-            for (String stanza : parser.getMsgs()) {
-                out.write(stanza);
-            }
-        }
-        return !in.hasRemaining();
-    }
+		parser.read(in);
+
+		if (parser.areThereMsgs()) {
+			for (String stanza : parser.getMsgs()) {
+				out.write(stanza);
+			}
+		}
+		return !in.hasRemaining();
+	}
 
 }

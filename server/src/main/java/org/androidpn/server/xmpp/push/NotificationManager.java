@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 
 /** 
@@ -34,7 +33,7 @@ import org.xmpp.packet.IQ;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Component
+//@Component
 public class NotificationManager {
 
 	private static final String NOTIFICATION_NAMESPACE = "androidpn:iq:notification";

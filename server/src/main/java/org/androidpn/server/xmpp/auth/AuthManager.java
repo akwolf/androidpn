@@ -24,10 +24,10 @@ import org.androidpn.server.service.UserNotFoundException;
 import org.androidpn.server.service.UserService;
 import org.androidpn.server.util.Config;
 import org.androidpn.server.xmpp.UnauthenticatedException;
+import org.androidpn.server.xmpp.XmppServer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /** 
  * This class is to provide the methods associated with user authentication. 
@@ -46,9 +46,6 @@ public class AuthManager {
 
 	private static MessageDigest digest;
 
-	@Autowired
-	private static UserService userService;
-
 	static {
 		try {
 			digest = MessageDigest.getInstance("SHA");
@@ -66,7 +63,9 @@ public class AuthManager {
 	 * @throws UserNotFoundException if the your was not found
 	 */
 	public static String getPassword(String username) throws UserNotFoundException {
-		return userService.getUserByUsername(username).getPassword();
+
+		return ((UserService) XmppServer.getInstance().getBean("userService")).getUserByUsername(username)
+				.getPassword();
 	}
 
 	/**
@@ -137,7 +136,7 @@ public class AuthManager {
 		try {
 			String password = getPassword(username);
 			String anticipatedDigest = createDigest(token, password);
-			
+
 			if (!digest.equalsIgnoreCase(anticipatedDigest)) {
 				throw new UnauthenticatedException();
 			}

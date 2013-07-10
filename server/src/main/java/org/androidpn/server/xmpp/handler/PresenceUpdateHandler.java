@@ -23,7 +23,6 @@ import org.androidpn.server.xmpp.session.Session;
 import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.PacketError;
@@ -35,7 +34,7 @@ import org.xmpp.packet.Presence;
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 
-@Component
+//@Component
 public class PresenceUpdateHandler {
 
     protected final Log log = LogFactory.getLog(getClass());

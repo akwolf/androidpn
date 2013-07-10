@@ -47,10 +47,6 @@ public class UserController {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	public UserController() {
-		//		userService = ServiceLocator.getUserService();
-	}
-
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		PresenceManager presenceManager = new PresenceManager();

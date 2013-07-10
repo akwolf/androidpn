@@ -25,14 +25,14 @@ import org.androidpn.server.service.UserExistsException;
 import org.androidpn.server.service.UserNotFoundException;
 import org.androidpn.server.service.UserService;
 import org.androidpn.server.xmpp.UnauthorizedException;
+import org.androidpn.server.xmpp.XmppServer;
 import org.androidpn.server.xmpp.session.ClientSession;
 import org.androidpn.server.xmpp.session.Session;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
@@ -42,13 +42,13 @@ import org.xmpp.packet.PacketError;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Component
-@Scope("prototype")
 public class IQRegisterHandler extends IQHandler {
+
+	private static final Log log = LogFactory.getLog(IQRegisterHandler.class);
 
 	private static final String NAMESPACE = "jabber:iq:register";
 
-	@Autowired
+	//	@Autowired
 	private UserService userService;
 
 	private Element probeResponse;
@@ -58,6 +58,7 @@ public class IQRegisterHandler extends IQHandler {
 	 */
 	public IQRegisterHandler() {
 		// <query xmlns="jabber:iq:register"><username/><password/><email/><name/></query>
+		userService = (UserService) XmppServer.getInstance().getBean("userService");
 		probeResponse = DocumentHelper.createElement(QName.get("query", NAMESPACE));
 		probeResponse.addElement("username");
 		probeResponse.addElement("password");
@@ -73,6 +74,9 @@ public class IQRegisterHandler extends IQHandler {
 	 * @throws UnauthorizedException if the user is not authorized
 	 */
 	public IQ handleIQ(IQ packet) throws UnauthorizedException {
+
+		log.debug("userService --------->" + userService);
+
 		IQ reply = null;
 
 		ClientSession session = sessionManager.getSession(packet.getFrom());
@@ -143,7 +147,7 @@ public class IQRegisterHandler extends IQHandler {
 					reply = IQ.createResultIQ(packet);
 				}
 			} catch (Exception ex) {
-				log.error(ex);
+				log.error("handleIQ occured an error : " + ex);
 				reply = IQ.createResultIQ(packet);
 				reply.setChildElement(packet.getChildElement().createCopy());
 				if (ex instanceof UserExistsException) {

@@ -18,7 +18,7 @@
 package org.androidpn.server.util;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,8 +73,9 @@ public class ConfigManager {
 	public void loadConfig(String configFileName) {
 		try {
 			//			ConfigurationFactory factory = new ConfigurationFactory(configFileName);
-			config = new XMLConfiguration(configFileName);
+			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder(configFileName);
 			//			config = factory.getConfiguration();
+			config = builder.getConfiguration();
 			log.info("Configuration loaded: " + configFileName);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);

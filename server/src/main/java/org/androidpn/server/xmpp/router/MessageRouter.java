@@ -17,8 +17,6 @@
  */
 package org.androidpn.server.xmpp.router;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.Message;
 
 /** 
@@ -28,8 +26,8 @@ import org.xmpp.packet.Message;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Component
-@Scope("prototype")
+//@Component
+//@Scope("prototype")
 public class MessageRouter {
 
     /**

@@ -20,6 +20,7 @@ package org.androidpn.server.xmpp.net;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.androidpn.server.util.Config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.core.service.IoHandler;
@@ -34,135 +35,140 @@ import org.xmlpull.v1.XmlPullParserFactory;
 /** 
  * This class is to create new sessions, destroy sessions and deliver
  * received XML stanzas to the StanzaHandler.
+ * 
+ * 用来和管理会话，连接、销毁将收到的XML stanzas 交给StanzasHandler处理，
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
 public class XmppIoHandler implements IoHandler {
 
-    private static final Log log = LogFactory.getLog(XmppIoHandler.class);
+	private static final Log log = LogFactory.getLog(XmppIoHandler.class);
 
-    public static final String XML_PARSER = "XML_PARSER";
+	public static final String XML_PARSER = "XML_PARSER";
 
-    private static final String CONNECTION = "CONNECTION";
+	private static final String CONNECTION = "CONNECTION";
 
-    private static final String STANZA_HANDLER = "STANZA_HANDLER";
+	private static final String STANZA_HANDLER = "STANZA_HANDLER";
 
-    private String serverName;
+	private String serverName;
 
-    private static Map<Integer, XMPPPacketReader> parsers = new ConcurrentHashMap<Integer, XMPPPacketReader>();
+	private static Map<Integer, XMPPPacketReader> parsers = new ConcurrentHashMap<Integer, XMPPPacketReader>();
 
-    private static XmlPullParserFactory factory = null;
+	private static XmlPullParserFactory factory = null;
 
-    static {
-        try {
-            factory = XmlPullParserFactory.newInstance(
-                    MXParser.class.getName(), null);
-            factory.setNamespaceAware(true);
-        } catch (XmlPullParserException e) {
-            log.error("Error creating a parser factory", e);
-        }
-    }
+	static {
+		try {
+			// 取得XmlPullParserFactory实例
+			factory = XmlPullParserFactory.newInstance(MXParser.class.getName(), null);
+			factory.setNamespaceAware(true);
+		} catch (XmlPullParserException e) {
+			log.error("Error creating a parser factory", e);
+		}
+	}
 
-    /**
-     * Constructor. Set the server name from server instance. 
-     */
-    protected XmppIoHandler() {
-//        serverName = XmppServer.getInstance().getServerName();
-    }
+	/**
+	 * Constructor. Set the server name from server instance. 
+	 */
+	protected XmppIoHandler() {
+		//        serverName = XmppServer.getInstance().getServerName();
+		serverName = Config.getString("xmpp.domain", "127.0.0.1").toLowerCase();
+	}
 
-    /**
-     * Invoked from an I/O processor thread when a new connection has been created.
-     */
-    public void sessionCreated(IoSession session) throws Exception {
-        log.debug("sessionCreated()...");
-    }
+	/**
+	 * Invoked from an I/O processor thread when a new connection has been created.
+	 * 
+	 * 当一个新的被创建时被I/O processor调用
+	 * 
+	 */
+	@Override
+	public void sessionCreated(IoSession session) throws Exception {
+		log.debug("sessionCreated()...");
+	}
 
-    /**
-     * Invoked when a connection has been opened.
-     */
-    public void sessionOpened(IoSession session) throws Exception {
-        log.debug("sessionOpened()...");
-        log.debug("remoteAddress=" + session.getRemoteAddress());
-        // Create a new XML parser
-        XMLLightweightParser parser = new XMLLightweightParser("UTF-8");
-        session.setAttribute(XML_PARSER, parser);
-        // Create a new connection
-        Connection connection = new Connection(session);
-        session.setAttribute(CONNECTION, connection);
-        session.setAttribute(STANZA_HANDLER, new StanzaHandler(serverName,
-                connection));
-    }
+	/**
+	 * Invoked when a connection has been opened.
+	 * 
+	 * 连接被打开时调用的方法
+	 * 
+	 */
+	@Override
+	public void sessionOpened(IoSession session) throws Exception {
+		log.debug("sessionOpened()...");
+		log.debug("remoteAddress=" + session.getRemoteAddress());
+		// Create a new XML parser
+		XMLLightweightParser parser = new XMLLightweightParser("UTF-8");
+		session.setAttribute(XML_PARSER, parser);
+		// Create a new connection
+		Connection connection = new Connection(session);
+		session.setAttribute(CONNECTION, connection);
+		session.setAttribute(STANZA_HANDLER, new StanzaHandler(serverName, connection));
+	}
 
-    /**
-     * Invoked when a connection is closed.
-     */
-    public void sessionClosed(IoSession session) throws Exception {
-        log.debug("sessionClosed()...");
-        Connection connection = (Connection) session.getAttribute(CONNECTION);
-        connection.close();
-    }
+	/**
+	 * Invoked when a connection is closed.
+	 */
+	public void sessionClosed(IoSession session) throws Exception {
+		log.debug("sessionClosed()...");
+		Connection connection = (Connection) session.getAttribute(CONNECTION);
+		connection.close();
+	}
 
-    /**
-     * Invoked with the related IdleStatus when a connection becomes idle.
-     */
-    public void sessionIdle(IoSession session, IdleStatus status)
-            throws Exception {
-        log.debug("sessionIdle()...");
-        Connection connection = (Connection) session.getAttribute(CONNECTION);
-        if (log.isDebugEnabled()) {
-            log.debug("Closing connection that has been idle: " + connection);
-        }
-        connection.close();
-    }
+	/**
+	 * Invoked with the related IdleStatus when a connection becomes idle.
+	 */
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
+		log.debug("sessionIdle()...");
+		Connection connection = (Connection) session.getAttribute(CONNECTION);
+		if (log.isDebugEnabled()) {
+			log.debug("Closing connection that has been idle: " + connection);
+		}
+		connection.close();
+	}
 
-    /**
-     * Invoked when any exception is thrown.
-     */
-    public void exceptionCaught(IoSession session, Throwable cause)
-            throws Exception {
-        log.debug("exceptionCaught()...");
-        log.error(cause);
-    }
+	/**
+	 * Invoked when any exception is thrown.
+	 */
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		log.debug("exceptionCaught()...");
+		log.error(cause);
+	}
 
-    /**
-     * Invoked when a message is received.
-     */
-    public void messageReceived(IoSession session, Object message)
-            throws Exception {
-        log.debug("messageReceived()...");
-        log.debug("RCVD: " + message);
+	/**
+	 * Invoked when a message is received.
+	 */
+	public void messageReceived(IoSession session, Object message) throws Exception {
+		log.debug("messageReceived()...,IoSession : " + session );
+		log.debug("RCVD: " + message);
 
-        // Get the stanza handler
-        StanzaHandler handler = (StanzaHandler) session
-                .getAttribute(STANZA_HANDLER);
+		// Get the stanza handler
+		StanzaHandler handler = (StanzaHandler) session.getAttribute(STANZA_HANDLER);
 
-        // Get the XMPP packet parser
-        int hashCode = Thread.currentThread().hashCode();
-        XMPPPacketReader parser = parsers.get(hashCode);
-        if (parser == null) {
-            parser = new XMPPPacketReader();
-            parser.setXPPFactory(factory);
-            parsers.put(hashCode, parser);
-        }
+//		log.debug("StanzaHandler : " + handler);
 
-        // The stanza handler processes the message
-        try {
-            handler.process((String) message, parser);
-        } catch (Exception e) {
-            log.error(
-                    "Closing connection due to error while processing message: "
-                            + message, e);
-            Connection connection = (Connection) session
-                    .getAttribute(CONNECTION);
-            connection.close();
-        }
-    }
+		// Get the XMPP packet parser
+		int hashCode = Thread.currentThread().hashCode();
+		XMPPPacketReader parser = parsers.get(hashCode);
+		if (parser == null) {
+			parser = new XMPPPacketReader();
+			parser.setXPPFactory(factory);
+			parsers.put(hashCode, parser);
+		}
 
-    /**
-     * Invoked when a message written by IoSession.write(Object) is sent out.
-     */
-    public void messageSent(IoSession session, Object message) throws Exception {
-        log.debug("messageSent()...");
-    }
+		// The stanza handler processes the message
+		try {
+			handler.process((String) message, parser);
+		} catch (Exception e) {
+			log.error("Closing connection due to error while processing message: " + message, e);
+			Connection connection = (Connection) session.getAttribute(CONNECTION);
+			connection.close();
+		}
+	}
+
+	/**
+	 * Invoked when a message written by IoSession.write(Object) is sent out.
+	 */
+	public void messageSent(IoSession session, Object message) throws Exception {
+		log.debug("messageSent()...");
+	}
 
 }

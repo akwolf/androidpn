@@ -17,7 +17,6 @@
  */
 package org.androidpn.server.xmpp.router;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
@@ -32,13 +31,13 @@ import org.xmpp.packet.Presence;
  */
 public class PacketRouter {
 
-	@Autowired
+//	@Autowired
     private MessageRouter messageRouter;
 
-	@Autowired
+//	@Autowired
     private PresenceRouter presenceRouter;
 
-	@Autowired
+//	@Autowired
     private IQRouter iqRouter;
 
 	
@@ -47,6 +46,9 @@ public class PacketRouter {
      * Constructor. 
      */
     public PacketRouter() {
+        messageRouter = new MessageRouter();
+        presenceRouter = new PresenceRouter();
+        iqRouter = new IQRouter();
     }
 
     /**

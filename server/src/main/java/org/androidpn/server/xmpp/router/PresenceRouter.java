@@ -23,9 +23,6 @@ import org.androidpn.server.xmpp.session.Session;
 import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.PacketError;
 import org.xmpp.packet.Presence;
@@ -37,8 +34,8 @@ import org.xmpp.packet.Presence;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Component
-@Scope("prototype")
+//@Component
+//@Scope("prototype")
 public class PresenceRouter {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -46,7 +43,7 @@ public class PresenceRouter {
     private SessionManager sessionManager;
 
     /** 在线状态更新处理器 */
-    @Autowired
+//    @Autowired
     private PresenceUpdateHandler presenceUpdateHandler;
 
     /**
@@ -54,7 +51,7 @@ public class PresenceRouter {
      */
     public PresenceRouter() {
         sessionManager = SessionManager.getInstance();
-//        presenceUpdateHandler = new PresenceUpdateHandler();
+        presenceUpdateHandler = new PresenceUpdateHandler();
     }
 
     /**

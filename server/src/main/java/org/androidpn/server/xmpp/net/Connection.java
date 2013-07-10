@@ -161,14 +161,6 @@ public class Connection {
 		return session.getStatus() == Session.STATUS_CLOSED;
 	}
 
-	//    /**
-	//     * Returns true if this connection is secure.
-	//     * 
-	//     * @return true if the connection is secure
-	//     */
-	//    public boolean isSecure() {
-	//        return ioSession.getFilterChain().contains("tls");
-	//    }
 
 	/**
 	 * Registers a listener for close event notification.

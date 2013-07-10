@@ -28,7 +28,12 @@ import java.util.List;
  */
 public class Config {
 
+//	private static final Log log = LogFactory.getLog(Config.class);
+
 	public static String getString(String key) {
+//		log.debug("ConfigManager instance is ========>" + ConfigManager.getInstance());
+//		log.debug("Configuration instance is ========>" + ConfigManager.getInstance().getConfig());
+
 		return ConfigManager.getInstance().getConfig().getString(key);
 	}
 

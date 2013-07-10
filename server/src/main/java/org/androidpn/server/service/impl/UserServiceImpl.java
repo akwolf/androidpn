@@ -34,13 +34,21 @@ import org.springframework.stereotype.Service;
  *
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
+	
 	@Autowired
 	private UserMapper userDao;
+	
+	/**
+	 * 
+	 */
+	public UserServiceImpl() {
+		System.out.println("--------------------");
+	}
 
 	public void setUserDao(UserMapper userDao) {
 		this.userDao = userDao;
